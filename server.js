@@ -15,7 +15,8 @@ export default function(opt) {
 
     const validHosts = (opt.domain) ? [opt.domain] : undefined;
     const myTldjs = tldjs.fromUserSettings({ validHosts });
-    const landingPage = opt.landing || 'https://localtunnel.github.io/www/';
+    const landingPage = opt.landing || 'https://google.de';
+    const accessKey = opt.accesskey;
 
     function GetClientIdFromHostname(hostname) {
         return myTldjs.getSubdomain(hostname);
@@ -63,6 +64,19 @@ export default function(opt) {
             return;
         }
 
+        // check accessKey if defined in options, if accessKey is defined but not provided 
+        // return an error
+        if(accessKey){
+            const accessKeyFromHeader = ctx.request.headers['tunnel-access-key'];
+            if(accessKeyFromHeader !== accessKey){
+                ctx.status = 403;
+                ctx.body = {
+                    message: 'please provide tunnel-access-key header to create a new tunnel',
+                };
+                return;
+            }
+        }
+
         const isNewClientRequest = ctx.query['new'] !== undefined;
         if (isNewClientRequest) {
             const reqId = hri.random();
@@ -93,6 +107,19 @@ export default function(opt) {
         }
 
         const reqId = parts[1];
+
+        // check accessKey if defined in options, if accessKey is defined but not provided 
+        // return an error
+        if(accessKey){
+            const accessKeyFromHeader = ctx.request.headers['tunnel-access-key'];
+            if(accessKeyFromHeader !== accessKey){
+                ctx.status = 403;
+                ctx.body = {
+                    message: 'please provide tunnel-access-key header to create a new tunnel',
+                };
+                return;
+            }
+        }
 
         // limit requested hostnames to 63 characters
         if (! /^(?:[a-z0-9][a-z0-9\-]{4,63}[a-z0-9]|[a-z0-9]{4,63})$/.test(reqId)) {

@@ -20,6 +20,10 @@ const argv = optimist
         default: '80',
         describe: 'listen on this port for outside requests'
     })
+    .options('accesskey', {
+        default: '',
+        describe: 'require accesskey on connection from localtunnel-client, this requires a supported version of localtunnel-client (https://github.com/webnugget/localtunnel-client)'
+    })
     .options('landing', {
         default: 'https://google.de',
         describe: 'landingpage'
@@ -47,6 +51,7 @@ const server = CreateServer({
     secure: argv.secure,
     domain: argv.domain,
     landing: argv.landing,
+    accesskey: argv.accesskey,
 });
 
 server.listen(argv.port, argv.address, () => {
