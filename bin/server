@@ -20,6 +20,10 @@ const argv = optimist
         default: '80',
         describe: 'listen on this port for outside requests'
     })
+    .options('landing', {
+        default: 'https://google.de',
+        describe: 'landingpage'
+    })
     .options('address', {
         default: '0.0.0.0',
         describe: 'IP address to bind to'
@@ -42,6 +46,7 @@ const server = CreateServer({
     max_tcp_sockets: argv['max-sockets'],
     secure: argv.secure,
     domain: argv.domain,
+    landing: argv.landing,
 });
 
 server.listen(argv.port, argv.address, () => {
